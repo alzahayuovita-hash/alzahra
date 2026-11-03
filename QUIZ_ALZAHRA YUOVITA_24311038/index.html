@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIMPAD - Sistem Informasi Monitoring PAD Kabupaten Tulang Bawang</title>
+  <meta name="description" content="Sistem Informasi Monitoring dan Optimalisasi Pendapatan Asli Daerah (PAD) Pemerintah Kabupaten Tulang Bawang, Provinsi Lampung.">
+
+  <!-- Tailwind CSS via CDN with customized theme tokens from skill_desain_simpad.md -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#001038",
+            "primary-container": "#0F2557",
+            secondary: "#006D30",
+            "secondary-container": "#92F5A4",
+            "secondary-fixed": "#95F8A7",
+            error: "#BA1A1A",
+            "error-container": "#FFDAD6",
+            surface: "#F8F9FF",
+            "surface-container-low": "#EFF4FF",
+            "surface-container": "#E5EEFF",
+            "surface-container-high": "#DCE9FF",
+            "surface-container-lowest": "#FFFFFF",
+            "on-surface": "#0B1C30",
+            "on-surface-variant": "#44464F",
+            outline: "#757680",
+            "outline-variant": "#C5C6D0"
+          },
+          fontFamily: {
+            sans: ["Plus Jakarta Sans", "sans-serif"],
+            mono: ["JetBrains Mono", "monospace"]
+          },
+          borderRadius: {
+            lg: "4px",
+            xl: "8px",
+            full: "12px"
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Material Symbols Outlined -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-surface text-slate-800 flex h-screen overflow-hidden antialiased">
+
+  <!-- Mobile Sidebar Overlay -->
+  <div id="mobile-sidebar-overlay" class="fixed inset-0 bg-primary/60 z-30 hidden md:hidden"></div>
+
+  <!-- SIDEBAR NAVIGASI (W-72 / 288px) -->
+  <aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-40 w-72 bg-primary text-white flex flex-col justify-between shrink-0 transition-transform duration-300 transform -translate-x-full md:translate-x-0 shadow-xl border-r border-slate-800/60 siger-bg-motif">
+    
+    <!-- Bagian Atas: Branding & Menu -->
+    <div class="flex flex-col h-full overflow-y-auto">
+      
+      <!-- Logo & Identitas Pemkab -->
+      <div class="p-5 border-b border-primary-container bg-primary/95 flex items-center space-x-3">
+        <div class="w-11 h-11 rounded-xl bg-primary-container border border-secondary-fixed/40 flex items-center justify-center text-secondary-fixed shadow-md shrink-0">
+          <span class="material-symbols-outlined text-2xl">account_balance</span>
+        </div>
+        <div>
+          <div class="text-[10px] tracking-widest text-slate-300 font-bold uppercase">Pemkab Tulang Bawang</div>
+          <h1 class="text-base font-extrabold tracking-tight text-white flex items-center space-x-1.5">
+            <span>SIMPAD</span>
+            <span class="text-[10px] bg-secondary text-white font-mono font-bold px-1.5 py-0.2 rounded">v1.0</span>
+          </h1>
+          <p class="text-[11px] text-slate-400">Monitoring & Optimalisasi PAD</p>
+        </div>
+      </div>
+
+      <!-- Live Monitoring Status Badge -->
+      <div class="px-5 py-2.5 bg-primary-container/80 border-b border-slate-700/40 flex items-center justify-between text-xs">
+        <div class="flex items-center space-x-2">
+          <span class="live-indicator"></span>
+          <span class="text-slate-300 text-[11px] font-medium">Sistem Monitoring Aktif</span>
+        </div>
+        <span class="text-[10px] font-mono text-secondary-fixed">Menggala</span>
+      </div>
+
+      <!-- Daftar Navigasi -->
+      <nav class="p-3 space-y-6 flex-1 text-xs">
+        
+        <!-- Grup: Utama -->
+        <div>
+          <div class="px-3 mb-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Utama</div>
+          <ul class="space-y-1">
+            <li>
+              <a href="#" class="nav-item active flex items-center px-3 py-2.5 rounded-lg text-slate-200 hover:bg-primary-container transition-colors" data-tab="dashboard">
+                <span class="material-symbols-outlined mr-3 text-lg">dashboard</span>
+                <span class="font-medium">Dashboard Capaian PAD</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="nav-item flex items-center px-3 py-2.5 rounded-lg text-slate-200 hover:bg-primary-container transition-colors" data-tab="kesenjangan">
+                <span class="material-symbols-outlined mr-3 text-lg">trending_up</span>
+                <span class="font-medium">Kesenjangan & Proyeksi</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Grup: Operasional & Verifikasi -->
+        <div>
+          <div class="px-3 mb-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Operasional & Verifikasi</div>
+          <ul class="space-y-1">
+            <li>
+              <a href="#" class="nav-item flex items-center justify-between px-3 py-2.5 rounded-lg text-slate-200 hover:bg-primary-container transition-colors" data-tab="verifikasi">
+                <div class="flex items-center">
+                  <span class="material-symbols-outlined mr-3 text-lg">verified</span>
+                  <span class="font-medium">Antrean Verifikasi & Input</span>
+                </div>
+                <span id="badge-count-verifikasi" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-slate-900">3</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="nav-item flex items-center justify-between px-3 py-2.5 rounded-lg text-slate-200 hover:bg-primary-container transition-colors" data-tab="anomali">
+                <div class="flex items-center">
+                  <span class="material-symbols-outlined mr-3 text-lg">warning</span>
+                  <span class="font-medium">Deteksi Anomali Data</span>
+                </div>
+                <span id="badge-count-anomali" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-error text-white">3</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Grup: Perencanaan & Laporan -->
+        <div>
+          <div class="px-3 mb-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Perencanaan & Laporan</div>
+          <ul class="space-y-1">
+            <li>
+              <a href="#" class="nav-item flex items-center px-3 py-2.5 rounded-lg text-slate-200 hover:bg-primary-container transition-colors" data-tab="laporan">
+                <span class="material-symbols-outlined mr-3 text-lg">description</span>
+                <span class="font-medium">Laporan Eksekutif (Cetak)</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="nav-item flex items-center px-3 py-2.5 rounded-lg text-slate-200 hover:bg-primary-container transition-colors" data-tab="simulasi">
+                <span class="material-symbols-outlined mr-3 text-lg">calculate</span>
+                <span class="font-medium">Simulasi Target APBD-P</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="nav-item flex items-center px-3 py-2.5 rounded-lg text-slate-200 hover:bg-primary-container transition-colors" data-tab="master-data">
+                <span class="material-symbols-outlined mr-3 text-lg">account_balance_wallet</span>
+                <span class="font-medium">Master Data & Rekening</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="nav-item flex items-center px-3 py-2.5 rounded-lg text-slate-200 hover:bg-primary-container transition-colors" data-tab="audit">
+                <span class="material-symbols-outlined mr-3 text-lg">history</span>
+                <span class="font-medium">Jejak Audit Keuangan</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+      </nav>
+
+      <!-- Panel Bawah Sidebar: Dasar Hukum -->
+      <div class="p-4 border-t border-primary-container bg-primary/80 text-[11px] text-slate-400 space-y-1.5">
+        <div class="font-bold text-slate-200 flex items-center space-x-1">
+          <span class="material-symbols-outlined text-sm text-secondary-fixed">gavel</span>
+          <span>Landasan Regulasi Daerah</span>
+        </div>
+        <p class="text-[10px] text-slate-400 leading-tight">
+          Perda Kab. Tulang Bawang No. 1 Thn 2024 (Pajak & Retribusi Daerah sesuai UU HKPD).
+        </p>
+      </div>
+
+    </div>
+
+  </aside>
+
+  <!-- AREA KONTEN UTAMA -->
+  <div class="flex-1 flex flex-col h-screen overflow-hidden">
+    
+    <!-- TOP BAR (TETAP) -->
+    <header id="top-bar" class="h-16 bg-white border-b border-slate-200/80 px-4 md:px-8 flex items-center justify-between shrink-0 shadow-sm z-20">
+      
+      <!-- Tombol Hamburger Mobile & Breadcrumb -->
+      <div class="flex items-center space-x-3">
+        <button id="mobile-menu-toggle" class="md:hidden p-2 text-slate-600 hover:text-slate-900 rounded-lg focus:outline-none">
+          <span class="material-symbols-outlined text-2xl">menu</span>
+        </button>
+
+        <div class="hidden sm:block">
+          <nav class="flex text-xs text-slate-500 space-x-1.5 font-medium">
+            <span>Kabupaten Tulang Bawang</span>
+            <span>/</span>
+            <span>SIMPAD</span>
+            <span>/</span>
+            <span id="breadcrumb-current" class="text-primary font-bold">Dashboard Capaian PAD</span>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Quick Switcher Tahun & Simulasi Role -->
+      <div class="flex items-center space-x-3">
+        
+        <!-- Filter Tahun Anggaran Cepat -->
+        <div class="flex items-center bg-surface-low rounded-lg p-1 border border-slate-200 text-xs">
+          <span class="text-[11px] font-bold text-slate-500 px-2 hidden lg:inline">Tahun:</span>
+          <button class="year-filter-btn px-2.5 py-1 rounded-md font-bold transition-all bg-primary text-white" data-year="2026">2026</button>
+          <button class="year-filter-btn px-2.5 py-1 rounded-md font-medium text-slate-700 hover:text-primary transition-all" data-year="2025">2025</button>
+          <button class="year-filter-btn px-2.5 py-1 rounded-md font-medium text-slate-700 hover:text-primary transition-all" data-year="2024">2024</button>
+        </div>
+
+        <!-- Role Switcher Dropdown (Simulasi RBAC) -->
+        <div class="relative hidden sm:flex items-center space-x-1.5 bg-surface-low px-2.5 py-1 rounded-lg border border-slate-200 text-xs">
+          <span class="material-symbols-outlined text-sm text-slate-500">badge</span>
+          <label for="role-selector" class="sr-only">Pilih Peran Pengguna</label>
+          <select id="role-selector" class="bg-transparent font-semibold text-slate-800 focus:outline-none cursor-pointer">
+            <option value="VERIFIKATOR">Mode: Verifikator (BPKAD)</option>
+            <option value="PIMPINAN">Mode: Pimpinan (Bupati / Sekda)</option>
+            <option value="OPERATOR">Mode: Operator (OPD Pemungut)</option>
+            <option value="PENGAWAS">Mode: Pengawas (Inspektorat)</option>
+            <option value="ADMIN">Mode: Administrator IT</option>
+          </select>
+        </div>
+
+        <!-- Profil Pengguna Aktif -->
+        <div class="flex items-center space-x-2.5 pl-2 border-l border-slate-200">
+          <div id="top-user-avatar" class="w-9 h-9 rounded-full bg-primary-container text-white flex items-center justify-center font-bold text-xs shadow-inner">
+            RS
+          </div>
+          <div class="hidden xl:block text-left">
+            <div id="top-user-name" class="font-bold text-xs text-slate-900 leading-tight">Rina Suryani, SE, Ak.</div>
+            <div id="top-user-role" class="text-[10px] text-slate-500 leading-tight">Kabid Akuntansi & Pelaporan (BPKAD)</div>
+          </div>
+        </div>
+
+      </div>
+
+    </header>
+
+    <!-- DISCLAIMER STRIP DATA SIMULASI RESMI -->
+    <div class="bg-amber-50 border-b border-amber-200 px-4 md:px-8 py-1.5 text-xs text-amber-900 flex items-center justify-between shrink-0">
+      <div class="flex items-center space-x-2">
+        <span class="material-symbols-outlined text-amber-600 text-base">info</span>
+        <span>
+          <strong>Data Simulasi & Analisis:</strong> Berdasarkan data SIKD & Dokumen Profil PAD Kab. Tulang Bawang (Bukan Publikasi Final Resmi Pemkab).
+        </span>
+      </div>
+      <span class="text-[11px] font-mono font-medium text-amber-800 hidden md:inline">Posisi Data: 20 Oktober 2026</span>
+    </div>
+
+    <!-- MAIN SCROLLABLE CONTENT AREA -->
+    <main class="flex-1 overflow-y-auto p-4 md:p-8 bg-surface">
+
+      <!-- ================================================================= -->
+      <!-- TAB 1: DASHBOARD CAPAIAN PAD (DEFAULT) -->
+      <!-- ================================================================= -->
+      <section id="section-dashboard" class="tab-content-section space-y-6">
+        
+        <!-- Header Dashboard & Tombol Aksi Cepat -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h2 class="text-xl md:text-2xl font-extrabold text-slate-900 tracking-tight">
+              Dashboard Capaian Pendapatan Asli Daerah
+            </h2>
+            <p class="text-xs md:text-sm text-slate-500 mt-0.5">
+              Monitoring realisasi penerimaan pajak, retribusi, kekayaan daerah dipisahkan, dan lain-lain PAD yang sah.
+            </p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="btn-open-input-modal" class="px-3.5 py-2 bg-primary text-white rounded-lg text-xs font-semibold hover:bg-primary-container transition-all flex items-center space-x-1.5 shadow-sm">
+              <span class="material-symbols-outlined text-sm">add_circle</span>
+              <span>Input Realisasi OPD</span>
+            </button>
+            <button id="btn-open-import-modal" class="px-3.5 py-2 bg-white text-slate-700 border border-slate-300 rounded-lg text-xs font-semibold hover:bg-slate-50 transition-all flex items-center space-x-1.5 shadow-sm">
+              <span class="material-symbols-outlined text-sm">upload_file</span>
+              <span>Impor CSV / Excel</span>
+            </button>
+            <button onclick="eksporDataCSV()" class="px-3.5 py-2 bg-emerald-700 text-white rounded-lg text-xs font-semibold hover:bg-emerald-800 transition-all flex items-center space-x-1.5 shadow-sm">
+              <span class="material-symbols-outlined text-sm">download</span>
+              <span>Ekspor Data</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 KPI CARDS UTAMA -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          
+          <!-- Card 1: Target APBD -->
+          <div class="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm kpi-card">
+            <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
+              <span class="font-bold uppercase tracking-wider text-[10px]">Target PAD APBD</span>
+              <div class="w-8 h-8 rounded-lg bg-surface-low text-primary flex items-center justify-center">
+                <span class="material-symbols-outlined text-lg">flag</span>
+              </div>
+            </div>
+            <div id="kpi-target-pad" class="text-xl md:text-2xl font-bold font-mono-numbers text-slate-900">
+              Rp 200.350.000.000
+            </div>
+            <div class="text-[11px] text-slate-500 mt-2 flex items-center space-x-1">
+              <span class="material-symbols-outlined text-sm text-emerald-600">trending_up</span>
+              <span>Target 2026 naik 9,13% dari 2025</span>
+            </div>
+          </div>
+
+          <!-- Card 2: Realisasi Berjalan -->
+          <div class="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm kpi-card">
+            <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
+              <span class="font-bold uppercase tracking-wider text-[10px]">Realisasi PAD</span>
+              <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center">
+                <span class="material-symbols-outlined text-lg">payments</span>
+              </div>
+            </div>
+            <div id="kpi-realisasi-pad" class="text-xl md:text-2xl font-bold font-mono-numbers text-emerald-700">
+              Rp 65.730.000.000
+            </div>
+            <div id="kpi-sub-realisasi" class="text-[11px] text-slate-500 mt-2">
+              <span class="text-amber-600 font-medium">Bulan ke-8 (Agustus)</span> • Laju: <span class="font-mono-numbers font-bold">Rp 8,22 M/bln</span>
+            </div>
+          </div>
+
+          <!-- Card 3: Persentase Capaian -->
+          <div class="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm kpi-card">
+            <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
+              <span class="font-bold uppercase tracking-wider text-[10px]">Persentase Capaian</span>
+              <div class="w-8 h-8 rounded-lg bg-surface-low text-primary flex items-center justify-center">
+                <span class="material-symbols-outlined text-lg">percent</span>
+              </div>
+            </div>
+            <div class="flex items-baseline space-x-2">
+              <div id="kpi-persen-pad" class="text-xl md:text-2xl font-bold font-mono-numbers text-primary">
+                32,81%
+              </div>
+              <span id="kpi-status-laporan" class="text-[11px] text-slate-500">Berjalan</span>
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-2 mt-3 overflow-hidden">
+              <div id="kpi-progress-bar" class="bg-primary h-2 rounded-full transition-all duration-500" style="width: 32.81%"></div>
+            </div>
+          </div>
+
+          <!-- Card 4: Rasio PAD thd Pendapatan Daerah (Ketergantungan Transfer) -->
+          <div class="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm kpi-card">
+            <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
+              <span class="font-bold uppercase tracking-wider text-[10px]">Rasio Kemandirian PAD</span>
+              <div class="w-8 h-8 rounded-lg bg-surface-low text-primary flex items-center justify-center">
+                <span class="material-symbols-outlined text-lg">pie_chart</span>
+              </div>
+            </div>
+            <div id="kpi-rasio-pad" class="text-xl md:text-2xl font-bold font-mono-numbers text-slate-900">
+              16,18%
+            </div>
+            <div id="kpi-sub-rasio" class="text-[11px] text-slate-500 mt-2 truncate">
+              Porsi target PAD terhadap anggaran pendapatan daerah 2026
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 4 KARTU RINCIAN KOMPONEN PAD -->
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Sumber Pendapatan Asli Daerah</h3>
+            <span class="text-xs text-slate-500">Berdasarkan 4 Komponen Utama UU HKPD</span>
+          </div>
+          <div id="komponen-cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Dynamically populated by renderKomponenCards() -->
+          </div>
+        </div>
+
+        <!-- GRAFIK ROW: TREN REALISASI BULANAN & KOMPOSISI -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Grafik Tren Bulanan & Proyeksi (2 Kolom) -->
+          <div class="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm lg:col-span-2 flex flex-col">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 mb-2 border-b border-slate-100 gap-2">
+              <div>
+                <h3 class="font-bold text-sm text-slate-900">Tren Realisasi Bulanan vs Proyeksi Akhir Tahun</h3>
+                <p class="text-xs text-slate-500">Realisasi per bulan, kumulatif, serta trayektori proyeksi akhir tahun</p>
+              </div>
+              <div class="flex items-center space-x-2 text-xs">
+                <span class="inline-flex items-center text-slate-600"><span class="w-3 h-3 bg-secondary rounded-full mr-1.5"></span>Kumulatif</span>
+                <span class="inline-flex items-center text-slate-600"><span class="w-3 h-3 bg-amber-500 rounded-full mr-1.5"></span>Proyeksi</span>
+              </div>
+            </div>
+            <div class="relative flex-1 min-h-[300px]">
+              <canvas id="chart-tren-bulanan"></canvas>
+            </div>
+          </div>
+
+          <!-- Grafik Donat Komposisi Realisasi PAD (1 Kolom) -->
+          <div class="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm flex flex-col">
+            <div class="pb-4 mb-2 border-b border-slate-100">
+              <h3 class="font-bold text-sm text-slate-900">Komposisi Realisasi PAD</h3>
+              <p class="text-xs text-slate-500">Porsi kontribusi per komponen penerimaan</p>
+            </div>
+            <div class="relative flex-1 min-h-[300px] flex items-center justify-center">
+              <canvas id="chart-komposisi-pad"></canvas>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- TABEL RINCIAN REKENING & PENDAPATAN PER KELOMPOK -->
+        <div class="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden">
+          <div class="p-5 border-b border-slate-200/80 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+              <h3 class="font-bold text-sm text-slate-900">Tabel Rincian Objek PAD & OPD Pengelola</h3>
+              <p class="text-xs text-slate-500">Data target, realisasi, persentase capaian per jenis penerimaan sesuai Perda 1/2024</p>
+            </div>
+            <div class="flex items-center space-x-2">
+              <span class="text-xs text-slate-400">Total 22 Akun Objek</span>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-surface-low text-slate-600 font-bold uppercase tracking-wider border-b border-slate-200">
+                <tr>
+                  <th class="px-4 py-3 w-32">Kode Rekening</th>
+                  <th class="px-4 py-3">Uraian Jenis Pendapatan</th>
+                  <th class="px-4 py-3 hidden md:table-cell">OPD Pengampu</th>
+                  <th class="px-4 py-3 text-right">Target APBD (Rp)</th>
+                  <th class="px-4 py-3 text-right">Realisasi (Rp)</th>
+                  <th class="px-4 py-3 text-center w-28">Capaian</th>
+                </tr>
+              </thead>
+              <tbody id="table-realisasi-tbody" class="divide-y divide-slate-100">
+                <!-- Dynamically populated by renderTableRealisasi() -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- TAB 2: KESENJANGAN & PROYEKSI AKHIR TAHUN -->
+      <!-- ================================================================= -->
+      <section id="section-kesenjangan" class="tab-content-section hidden space-y-6">
+        
+        <div>
+          <h2 class="text-xl md:text-2xl font-extrabold text-slate-900 tracking-tight">
+            Analisis Kesenjangan & Proyeksi Akhir Tahun
+          </h2>
+          <p class="text-xs md:text-sm text-slate-500 mt-0.5">
+            Evaluasi laju penyerapan aktual vs kebutuhan akselerasi target PAD Kabupaten Tulang Bawang.
+          </p>
+        </div>
+
+        <!-- Problem Highlight Banner (PRD Section 1) -->
+        <div class="bg-red-50 border border-red-200 p-5 rounded-xl shadow-sm">
+          <div class="flex items-start space-x-3">
+            <span class="material-symbols-outlined text-red-600 text-2xl mt-0.5">warning</span>
+            <div>
+              <h3 class="font-bold text-sm text-red-900">Peringatan Kesenjangan Fiskal Posisi Agustus 2026</h3>
+              <p class="text-xs text-red-800 mt-1 leading-relaxed">
+                Target PAD 2026 dinaikkan menjadi <strong>Rp 200,35 Miliar</strong>. Hingga bulan ke-8 (Agustus), realisasi baru mencapai <strong>Rp 65,73 Miliar (32,81%)</strong>.
+                Sisa target sebesar <strong>Rp 134,62 Miliar (67,19%)</strong> harus dikejar dalam 4 bulan tersisa (September–Desember).
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metrik Perbandingan Laju vs Kebutuhan -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm">
+            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Kebutuhan Rata-Rata Bulanan (Sep-Des)</div>
+            <div id="gap-kebutuhan-bulanan" class="text-xl font-bold font-mono-numbers text-red-700">Rp 33,66 M / bln</div>
+            <p class="text-xs text-slate-500 mt-2">Diperlukan agar mencapai target 100% pada 31 Desember 2026</p>
+          </div>
+
+          <div class="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm">
+            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Laju Rata-Rata Aktual (Jan-Agt)</div>
+            <div id="gap-laju-berjalan" class="text-xl font-bold font-mono-numbers text-slate-800">Rp 8,22 M / bln</div>
+            <p class="text-xs text-slate-500 mt-2">Berdasarkan realisasi berjalan 8 bulan pertama tahun 2026</p>
+          </div>
+
+          <div class="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm">
+            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Kesenjangan Akselerasi yang Dibutuhkan</div>
+            <div id="gap-rasio-percepatan" class="text-xl font-bold font-mono-numbers text-amber-600">4,1x Lipat</div>
+            <p class="text-xs text-slate-500 mt-2">Laju pemungutan harus melonjak 4 kali lipat dari rata-rata saat ini</p>
+          </div>
+        </div>
+
+        <!-- Grafik Proyeksi & Kesenjangan -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm">
+            <h3 class="font-bold text-sm text-slate-900 mb-1">Simulasi Proyeksi Akhir Tahun 2026</h3>
+            <p class="text-xs text-slate-500 mb-4">Perbandingan target dengan estimasi laju rata-rata vs estimasi musiman</p>
+            <div class="relative h-[280px]">
+              <canvas id="chart-simulasi-proyeksi"></canvas>
+            </div>
+          </div>
+
+          <div class="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm">
+            <h3 class="font-bold text-sm text-slate-900 mb-1">Perbandingan Target vs Realisasi Multi-Tahun</h3>
+            <p class="text-xs text-slate-500 mb-4">Tren historis TA 2024 (74,56%), TA 2025 (45,36%), dan TA 2026 berjalan</p>
+            <div class="relative h-[280px]">
+              <canvas id="chart-multi-tahun"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rekomendasi Kebijakan Fiskal Berdasarkan PRD -->
+        <div class="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm space-y-4">
+          <h3 class="font-bold text-sm text-slate-900 flex items-center space-x-2">
+            <span class="material-symbols-outlined text-primary text-lg">lightbulb</span>
+            <span>Rekomendasi Tindak Lanjut Optimalisasi PAD (PRD Bagian 6)</span>
+          </h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+            <div class="p-4 bg-surface-low rounded-lg border border-slate-200">
+              <h4 class="font-bold text-slate-900 mb-1 flex items-center space-x-1">
+                <span class="material-symbols-outlined text-base text-primary">credit_card</span>
+                <span>1. Percepatan ETPD</span>
+              </h4>
+              <p class="text-slate-600 leading-relaxed">
+                Bapenda Tulang Bawang perlu memperluas kanal pembayaran digital (QRIS, VA Bank Lampung) pada seluruh jenis retribusi pasar, parkir, dan PBG untuk menekan kebocoran.
+              </p>
+            </div>
+
+            <div class="p-4 bg-surface-low rounded-lg border border-slate-200">
+              <h4 class="font-bold text-slate-900 mb-1 flex items-center space-x-1">
+                <span class="material-symbols-outlined text-base text-primary">landscape</span>
+                <span>2. Pemutakhiran Objek PBB-P2</span>
+              </h4>
+              <p class="text-slate-600 leading-relaxed">
+                Dengan basis ekonomi perkebunan dan pertanian, lakukan pemutakhiran data NJOP dan pendataan objek pajak sawit dan korporasi di Tulang Bawang.
+              </p>
+            </div>
+
+            <div class="p-4 bg-surface-low rounded-lg border border-slate-200">
+              <h4 class="font-bold text-slate-900 mb-1 flex items-center space-x-1">
+                <span class="material-symbols-outlined text-base text-primary">store</span>
+                <span>3. Optimalisasi Terminal Menggala</span>
+              </h4>
+              <p class="text-slate-600 leading-relaxed">
+                Tindak lanjuti riset akademik optimalisasi aset Terminal Menggala dan kios pasar daerah untuk mendongkrak retribusi daerah yang saat ini hanya berkontribusi 4,41%.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- TAB 3: ANTREAN VERIFIKASI & INPUT REALISASI OPD -->
+      <!-- ================================================================= -->
+      <section id="section-verifikasi" class="tab-content-section hidden space-y-6">
+        
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h2 class="text-xl md:text-2xl font-extrabold text-slate-900 tracking-tight">
+              Antrean Verifikasi Dokumen & Input Realisasi OPD
+            </h2>
+            <p class="text-xs md:text-sm text-slate-500 mt-0.5">
+              Alur persetujuan Surat Tanda Setor (STS) sebelum data penerimaan dipublikasikan ke dashboard resmi.
+            </p>
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <button onclick="document.getElementById('modal-input-realisasi').classList.remove('hidden')" class="px-3.5 py-2 bg-primary text-white rounded-lg text-xs font-semibold hover:bg-primary-container transition-all flex items-center space-x-1.5 shadow-sm">
+              <span class="material-symbols-outlined text-sm">add</span>
+              <span>Input Realisasi Baru</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Tabel Antrean Verifikasi -->
+        <div class="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden">
+          <div class="p-4 border-b border-slate-200/80 bg-surface-low/50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs">
+            <div class="flex items-center space-x-2">
+              <span class="font-bold text-slate-700">Daftar Pengajuan Setoran OPD</span>
+              <span class="text-slate-400">• Status: Draf, Menunggu, Terverifikasi, Ditolak</span>
+            </div>
+            <div class="text-slate-500">
+              Menampilkan seluruh riwayat dokumen STS
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-surface-low text-slate-600 font-bold uppercase tracking-wider border-b border-slate-200">
+                <tr>
+                  <th class="px-4 py-3">No. Bukti / STS</th>
+                  <th class="px-4 py-3">Tanggal</th>
+                  <th class="px-4 py-3">OPD Pemungut</th>
+                  <th class="px-4 py-3">Akun & Sumber</th>
+                  <th class="px-4 py-3 text-right">Nominal (Rp)</th>
+                  <th class="px-4 py-3 text-center">Status</th>
+                  <th class="px-4 py-3 text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="table-verifikasi-tbody" class="divide-y divide-slate-100">
+                <!-- Dynamically populated by renderAntreanVerifikasi() -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- TAB 4: DETEKSI ANOMALI DATA PAD (FR-6.5) -->
+      <!-- ================================================================= -->
+      <section id="section-anomali" class="tab-content-section hidden space-y-6">
+        
+        <div>
+          <h2 class="text-xl md:text-2xl font-extrabold text-slate-900 tracking-tight">
+            Deteksi Anomali & Rekonsiliasi Kualitas Data PAD
+          </h2>
+          <p class="text-xs md:text-sm text-slate-500 mt-0.5">
+            Sistem pengawasan otomatis berdasarkan 6 aturan ambang batas (A-1 s.d. A-6) sesuai spesifikasi PRD.
+          </p>
+        </div>
+
+        <!-- 6 Aturan Deteksi Grid -->
+        <div class="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm">
+          <h3 class="font-bold text-sm text-slate-900 mb-3 flex items-center space-x-2">
+            <span class="material-symbols-outlined text-primary text-base">rule</span>
+            <span>Aturan Deteksi Anomali Aktif (PRD FR-6.5)</span>
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+            <div class="p-3 bg-surface-low rounded-lg border border-slate-200">
+              <div class="font-mono-numbers font-bold text-primary">A-1: Realisasi Melebihi Target</div>
+              <p class="text-slate-600 text-[11px] mt-1">Ambang: > 120% (Kasus: Retribusi 2025 tercatat 584%)</p>
+            </div>
+            <div class="p-3 bg-surface-low rounded-lg border border-slate-200">
+              <div class="font-mono-numbers font-bold text-primary">A-2: Serapan Sangat Rendah</div>
+              <p class="text-slate-600 text-[11px] mt-1">Ambang: < 50% setelah bln ke-9 (Kasus: Lain-lain PAD 2025 hanya 5,90%)</p>
+            </div>
+            <div class="p-3 bg-surface-low rounded-lg border border-slate-200">
+              <div class="font-mono-numbers font-bold text-primary">A-3: Lonjakan Bulanan Tak Wajar</div>
+              <p class="text-slate-600 text-[11px] mt-1">Ambang: > 3x rata-rata (Kasus: Juli ke Agt 2026 loncat 4,7x lipat)</p>
+            </div>
+            <div class="p-3 bg-surface-low rounded-lg border border-slate-200">
+              <div class="font-mono-numbers font-bold text-primary">A-4: Nilai Kumulatif Turun</div>
+              <p class="text-slate-600 text-[11px] mt-1">Ambang: Kumulatif(n) < Kumulatif(n-1) tanpa berita acara</p>
+            </div>
+            <div class="p-3 bg-surface-low rounded-lg border border-slate-200">
+              <div class="font-mono-numbers font-bold text-primary">A-5: Discrepancy Komponen vs Total</div>
+              <p class="text-slate-600 text-[11px] mt-1">Ambang: Selisih != 0 (Kasus: Typo total pendapatan RLPPD 2024)</p>
+            </div>
+            <div class="p-3 bg-surface-low rounded-lg border border-slate-200">
+              <div class="font-mono-numbers font-bold text-primary">A-6: Rekening Tanpa Target</div>
+              <p class="text-slate-600 text-[11px] mt-1">Ambang: Target = 0 tapi ada realisasi penerimaan</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Daftar Temuan Kasus Anomali Riil -->
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="font-bold text-sm text-slate-800 uppercase tracking-wider">Daftar Kasus Anomali Riil Terdeteksi</h3>
+            <span class="text-xs text-slate-500">Wajib ditindaklanjuti verifikator sebelum angka terverifikasi</span>
+          </div>
+
+          <div id="anomali-cards-container" class="space-y-4">
+            <!-- Dynamically populated by renderKasusAnomali() -->
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- TAB 5: LAPORAN & REKAPITULASI EKSEKUTIF (SIAP CETAK) -->
+      <!-- ================================================================= -->
+      <section id="section-laporan" class="tab-content-section hidden space-y-6">
+        
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 no-print">
+          <div>
+            <h2 class="text-xl md:text-2xl font-extrabold text-slate-900 tracking-tight">
+              Laporan Eksekutif & Lembar Monitoring Pimpinan
+            </h2>
+            <p class="text-xs md:text-sm text-slate-500 mt-0.5">
+              Format formal siap cetak satu halaman untuk Bupati dan Sekretaris Daerah Kabupaten Tulang Bawang.
+            </p>
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <button onclick="cetakLaporanEksekutif()" class="px-4 py-2 bg-primary text-white rounded-lg text-xs font-semibold hover:bg-primary-container transition-all flex items-center space-x-1.5 shadow-sm">
+              <span class="material-symbols-outlined text-sm">print</span>
+              <span>Cetak Laporan / Simpan PDF</span>
+            </button>
+            <button onclick="eksporDataCSV()" class="px-3.5 py-2 bg-white text-slate-700 border border-slate-300 rounded-lg text-xs font-semibold hover:bg-slate-50 transition-all flex items-center space-x-1.5 shadow-sm">
+              <span class="material-symbols-outlined text-sm">file_download</span>
+              <span>Unduh CSV</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- PRINTABLE EXECUTIVE REPORT CARD -->
+        <div class="bg-white p-6 md:p-10 rounded-xl border border-slate-300 shadow-md max-w-4xl mx-auto space-y-6">
+          
+          <!-- Kop Surat Resmi -->
+          <div class="border-b-2 border-slate-900 pb-4 text-center space-y-1">
+            <h3 class="font-extrabold text-sm md:text-base uppercase tracking-wider text-slate-900">
+              PEMERINTAH KABUPATEN TULANG BAWANG
+            </h3>
+            <h4 class="font-bold text-base md:text-lg uppercase text-slate-900">
+              BADAN PENDAPATAN DAERAH (BAPENDA)
+            </h4>
+            <p class="text-xs text-slate-600">
+              Kompleks Perkantoran Tiuh Tohou, Menggala, Kabupaten Tulang Bawang, Lampung • Kode Pos 34596
+            </p>
+          </div>
+
+          <!-- Judul Laporan -->
+          <div class="text-center space-y-1 pt-2">
+            <h4 class="font-extrabold text-sm uppercase underline text-slate-900">
+              RINGKASAN EKSEKUTIF REALISASI PENDAPATAN ASLI DAERAH (PAD)
+            </h4>
+            <p class="text-xs text-slate-600">
+              Tahun Anggaran 2026 (Posisi s.d. 31 Agustus 2026 / Triwulan III)
+            </p>
+          </div>
+
+          <!-- Highlight KPI 4 Kotak di Laporan -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs border border-slate-300 p-3 bg-slate-50">
+            <div>
+              <span class="text-slate-500 block">Target APBD 2026:</span>
+              <strong id="rep-target-2026" class="font-mono-numbers text-slate-900">Rp 200.350.000.000</strong>
+            </div>
+            <div>
+              <span class="text-slate-500 block">Realisasi Berjalan:</span>
+              <strong id="rep-realisasi-2026" class="font-mono-numbers text-emerald-800">Rp 65.730.000.000</strong>
+            </div>
+            <div>
+              <span class="text-slate-500 block">Persentase Capaian:</span>
+              <strong id="rep-persen-2026" class="font-mono-numbers text-primary">32,81%</strong>
+            </div>
+            <div>
+              <span class="text-slate-500 block">Sisa Target (Gap):</span>
+              <strong id="rep-gap-2026" class="font-mono-numbers text-red-700">Rp 134.620.000.000</strong>
+            </div>
+          </div>
+
+          <!-- Tabel Rekapitulasi Komponen -->
+          <div id="rep-komponen-table">
+            <!-- Dynamically populated by renderLaporanEksekutif() -->
+          </div>
+
+          <!-- Catatan Analisis Eksekutif -->
+          <div class="text-xs text-slate-700 space-y-2 pt-2">
+            <div class="font-bold text-slate-900">Catatan Analisis Kinerja Fiskal:</div>
+            <ol class="list-decimal pl-5 space-y-1 leading-relaxed text-slate-600">
+              <li>Laju pemungutan rata-rata berjalan s.d. Agustus adalah <strong>Rp 8,22 Miliar/bulan</strong>, sedangkan untuk memenuhi target 100% dibutuhkan <strong>Rp 33,66 Miliar/bulan</strong> pada September–Desember 2026.</li>
+              <li>Penerimaan terbesar saat ini bersumber dari <em>Lain-lain PAD yang Sah</em> (51,41%) dan <em>Pajak Daerah</em> (44,18%), sedangkan kontribusi <em>Retribusi Daerah</em> masih rendah (4,41%).</li>
+              <li>Hasil Pengelolaan Kekayaan Daerah yang Dipisahkan (dividen PT Bank Lampung) direncanakan cair pada Triwulan IV sebesar Rp 1,96 Miliar.</li>
+            </ol>
+          </div>
+
+          <!-- Blok Tanda Tangan Formal -->
+          <div class="grid grid-cols-2 pt-8 text-xs text-center">
+            <div>
+              <p class="text-slate-500">Mengetahui,</p>
+              <p class="font-bold text-slate-900">Sekretaris Daerah Kab. Tulang Bawang</p>
+              <div class="h-16"></div>
+              <p class="font-extrabold text-slate-900 underline">Ir. ANTHONY, MM</p>
+              <p class="text-slate-500">Pembina Utama Madya • NIP. 19680812 199403 1 008</p>
+            </div>
+            <div>
+              <p class="text-slate-500">Menggala, 20 Oktober 2026</p>
+              <p class="font-bold text-slate-900">Kepala Badan Pendapatan Daerah</p>
+              <div class="h-16"></div>
+              <p class="font-extrabold text-slate-900 underline">FERLY YULEDI, SP, MM</p>
+              <p class="text-slate-500">Pembina Tingkat I • NIP. 19740718 200212 1 005</p>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- TAB 6: SIMULASI TARGET APBD-P (BAPPEDA / TAPD) -->
+      <!-- ================================================================= -->
+      <section id="section-simulasi" class="tab-content-section hidden space-y-6">
+        
+        <div>
+          <h2 class="text-xl md:text-2xl font-extrabold text-slate-900 tracking-tight">
+            Kalkulator Simulasi Target APBD Perubahan
+          </h2>
+          <p class="text-xs md:text-sm text-slate-500 mt-0.5">
+            Alat bantu perencanaan TAPD dan Bappeda untuk memodelkan target realistis berbasis kapasitas historis.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Input Form Simulasi -->
+          <div class="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm space-y-4">
+            <h3 class="font-bold text-sm text-slate-900 flex items-center space-x-1.5">
+              <span class="material-symbols-outlined text-primary text-base">tune</span>
+              <span>Parameter Skenario Target</span>
+            </h3>
+
+            <div>
+              <label for="sim-input-target" class="block text-xs font-semibold text-slate-700 mb-1">Usulan Target PAD (Miliar Rp):</label>
+              <input type="number" id="sim-input-target" value="185" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs font-mono font-bold focus:ring-1 focus:ring-primary focus:outline-none">
+              <p class="text-[11px] text-slate-400 mt-1">APBD Murni: Rp 200,35 Miliar | Historis 2024: Rp 139,36 M</p>
+            </div>
+
+            <div>
+              <label for="sim-input-realisasi" class="block text-xs font-semibold text-slate-700 mb-1">Realisasi Posisi Saat Ini (Miliar Rp):</label>
+              <input type="number" id="sim-input-realisasi" value="65.73" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs font-mono font-bold focus:ring-1 focus:ring-primary focus:outline-none">
+            </div>
+
+            <div>
+              <label for="sim-input-bulan" class="block text-xs font-semibold text-slate-700 mb-1">Sisa Bulan Pemungutan:</label>
+              <select id="sim-input-bulan" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs font-semibold focus:outline-none">
+                <option value="4">4 Bulan (September s.d. Desember)</option>
+                <option value="3">3 Bulan (Oktober s.d. Desember)</option>
+                <option value="2">2 Bulan (November s.d. Desember)</option>
+              </select>
+            </div>
+
+            <button onclick="hitungSimulasiTarget()" class="w-full py-2.5 bg-primary text-white rounded-lg text-xs font-bold hover:bg-primary-container transition-all flex items-center justify-center space-x-1">
+              <span class="material-symbols-outlined text-sm">calculate</span>
+              <span>Hitung Trayektori Target</span>
+            </button>
+          </div>
+
+          <!-- Output Hasil Simulasi -->
+          <div class="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm lg:col-span-2 space-y-4">
+            <h3 class="font-bold text-sm text-slate-900">Hasil Evaluasi Kelayakan Skenario</h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="p-4 bg-surface-low rounded-lg border border-slate-200">
+                <span class="text-slate-500 text-xs block">Sisa Target yang Harus Dikejar:</span>
+                <span id="sim-res-sisa" class="text-xl font-bold font-mono-numbers text-slate-900">Rp 119,27 Miliar</span>
+              </div>
+              <div class="p-4 bg-surface-low rounded-lg border border-slate-200">
+                <span class="text-slate-500 text-xs block">Kebutuhan Laju per Bulan:</span>
+                <span id="sim-res-kebutuhan" class="text-xl font-bold font-mono-numbers text-emerald-700">Rp 29,82 Miliar / bln</span>
+              </div>
+            </div>
+
+            <div id="sim-res-rekomendasi" class="p-4 bg-amber-50 rounded-lg border border-amber-200 text-xs text-amber-900 leading-relaxed">
+              <strong class="font-bold block mb-1">Rekomendasi Analitis TAPD:</strong>
+              Dengan usulan target Rp 185 Miliar, laju pemungutan bulanan masih membutuhkan Rp 29,82 M/bulan (3,6x rata-rata berjalan). Dianjurkan mengoptimalkan pos PBB-P2 perkebunan dan kepatuhan wajib pajak badan untuk menutup defisit.
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- TAB 7: MASTER DATA & KODE REKENING -->
+      <!-- ================================================================= -->
+      <section id="section-master-data" class="tab-content-section hidden space-y-6">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h2 class="text-xl md:text-2xl font-extrabold text-slate-900 tracking-tight">
+              Master Data Kode Rekening PAD & Pemetaan OPD
+            </h2>
+            <p class="text-xs md:text-sm text-slate-500 mt-0.5">
+              Hierarki akun pendapatan sesuai klasifikasi Permendagri dan Perda No. 1 Tahun 2024 Kabupaten Tulang Bawang.
+            </p>
+          </div>
+        </div>
+
+        <div id="master-data-table-container" class="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden">
+          <!-- Dynamically populated by renderMasterData() -->
+        </div>
+
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- TAB 8: JEJAK AUDIT KEUANGAN (FR-8.1) -->
+      <!-- ================================================================= -->
+      <section id="section-audit" class="tab-content-section hidden space-y-6">
+        
+        <div>
+          <h2 class="text-xl md:text-2xl font-extrabold text-slate-900 tracking-tight">
+            Jejak Audit & Log Aktivitas Keuangan Daerah
+          </h2>
+          <p class="text-xs md:text-sm text-slate-500 mt-0.5">
+            Log permanen yang mencatat siapa, kapan, entitas apa, nilai lama, dan nilai baru untuk setiap tindakan sistem.
+          </p>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden">
+          <div class="p-4 border-b border-slate-200/80 bg-surface-low/50 flex items-center justify-between text-xs">
+            <span class="font-bold text-slate-700">Audit Trail Terenkripsi & WORM (Write Once Read Many)</span>
+            <span class="text-emerald-700 font-semibold flex items-center space-x-1">
+              <span class="material-symbols-outlined text-sm">lock</span>
+              <span>Integritas Log Terjamin</span>
+            </span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-surface-low text-slate-600 font-bold uppercase tracking-wider border-b border-slate-200">
+                <tr>
+                  <th class="px-4 py-3">Timestamp</th>
+                  <th class="px-4 py-3">Pengguna & OPD</th>
+                  <th class="px-4 py-3">Aksi</th>
+                  <th class="px-4 py-3">Objek / Entitas</th>
+                  <th class="px-4 py-3">Perubahan Nilai</th>
+                  <th class="px-4 py-3">IP Address</th>
+                </tr>
+              </thead>
+              <tbody id="table-audit-tbody" class="divide-y divide-slate-100">
+                <!-- Dynamically populated by renderAuditTable() -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- MODAL 1: INPUT REALISASI OPD BARU (FR-3.1) -->
+  <!-- ================================================================= -->
+  <div id="modal-input-realisasi" class="modal-container modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-xl shadow-2xl border border-slate-200 max-w-lg w-full overflow-hidden animate-scale-up">
+      <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-surface-low">
+        <div class="flex items-center space-x-2">
+          <span class="material-symbols-outlined text-primary text-xl">post_add</span>
+          <h3 class="font-bold text-sm text-slate-900">Form Pengajuan Realisasi PAD Baru</h3>
+        </div>
+        <button class="btn-close-modal text-slate-400 hover:text-slate-700">
+          <span class="material-symbols-outlined text-base">close</span>
+        </button>
+      </div>
+
+      <form id="form-input-realisasi" class="p-5 space-y-4 text-xs">
+        <div>
+          <label for="input-opd" class="block font-semibold text-slate-700 mb-1">OPD Pengampu / Pemungut:</label>
+          <select id="input-opd" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary font-medium">
+            <option value="OPD-01">Badan Pendapatan Daerah (Bapenda)</option>
+            <option value="OPD-04">RSUD Menggala (BLUD)</option>
+            <option value="OPD-05">Dinas Perhubungan</option>
+            <option value="OPD-06">Dinas Perdagangan</option>
+            <option value="OPD-07">Dinas PUPR</option>
+            <option value="OPD-08">Dinas Lingkungan Hidup</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="input-akun" class="block font-semibold text-slate-700 mb-1">Kode Rekening & Jenis PAD:</label>
+          <select id="input-akun" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary font-medium">
+            <option value="4.1.01.01">4.1.01.01 - PBB-P2 Perdesaan & Perkotaan</option>
+            <option value="4.1.01.02">4.1.01.02 - BPHTB Tanah & Bangunan</option>
+            <option value="4.1.01.03">4.1.01.03 - PBJT Tenaga Listrik</option>
+            <option value="4.1.02.04">4.1.02.04 - Retribusi Terminal Menggala</option>
+            <option value="4.1.02.05">4.1.02.05 - Retribusi Pelayanan Pasar</option>
+            <option value="4.1.04.01">4.1.04.01 - Layanan Pasien BPJS BLUD RSUD</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label for="input-no-sts" class="block font-semibold text-slate-700 mb-1">Nomor Dokumen / STS:</label>
+            <input type="text" id="input-no-sts" placeholder="STS/OPD/2026/09/..." class="w-full px-3 py-2 border border-slate-300 rounded-lg font-mono focus:outline-none">
+          </div>
+          <div>
+            <label for="input-nominal" class="block font-semibold text-slate-700 mb-1">Nominal Setoran (Rp):</label>
+            <input type="number" id="input-nominal" placeholder="Contoh: 150000000" class="w-full px-3 py-2 border border-slate-300 rounded-lg font-mono font-bold focus:outline-none" required>
+          </div>
+        </div>
+
+        <div>
+          <label for="input-keterangan" class="block font-semibold text-slate-700 mb-1">Uraian / Keterangan Penyetoran:</label>
+          <textarea id="input-keterangan" rows="2" placeholder="Uraikan sumber penerimaan dan wilayah pemungutan..." class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none"></textarea>
+        </div>
+
+        <div>
+          <label for="input-file-sts" class="block font-semibold text-slate-700 mb-1">Unggah Bukti Setor / Rekening Koran (PDF/JPG):</label>
+          <input type="file" id="input-file-sts" class="w-full text-slate-500 text-xs file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-surface-low file:text-primary hover:file:bg-slate-200">
+        </div>
+
+        <div class="flex justify-end space-x-2 pt-3 border-t border-slate-200">
+          <button type="button" class="btn-close-modal px-4 py-2 border border-slate-300 rounded-lg text-slate-700 font-semibold hover:bg-slate-50">Batal</button>
+          <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg font-semibold hover:bg-primary-container shadow-sm">Kirim ke Verifikator</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- MODAL 2: IMPOR BERKAS CSV / EXCEL (FR-3.2) -->
+  <!-- ================================================================= -->
+  <div id="modal-import-berkas" class="modal-container modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-xl shadow-2xl border border-slate-200 max-w-lg w-full overflow-hidden">
+      <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-surface-low">
+        <div class="flex items-center space-x-2">
+          <span class="material-symbols-outlined text-primary text-xl">upload_file</span>
+          <h3 class="font-bold text-sm text-slate-900">Impor Data Realisasi CSV / Excel</h3>
+        </div>
+        <button class="btn-close-modal text-slate-400 hover:text-slate-700">
+          <span class="material-symbols-outlined text-base">close</span>
+        </button>
+      </div>
+
+      <div class="p-5 space-y-4 text-xs">
+        <div class="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center space-y-2 bg-slate-50">
+          <span class="material-symbols-outlined text-3xl text-slate-400">cloud_upload</span>
+          <div class="font-semibold text-slate-700">Pilih Berkas CSV / XLSX atau Tarik ke Sini</div>
+          <p class="text-[11px] text-slate-400">Format wajib: Kode Rekening, Tahun, Bulan, Nilai Kumulatif, No Bukti</p>
+          <input type="file" class="hidden" id="file-drop-zone">
+          <button onclick="document.getElementById('file-drop-zone').click()" class="mt-2 px-3 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-semibold hover:bg-slate-50 text-slate-700">
+            Jelajahi Berkas
+          </button>
+        </div>
+
+        <div class="p-3 bg-emerald-50 rounded-lg border border-emerald-200 text-emerald-900 space-y-1">
+          <div class="font-bold flex items-center space-x-1">
+            <span class="material-symbols-outlined text-sm text-emerald-700">check_circle</span>
+            <span>Templat Standar BPKAD Tulang Bawang Terdeteksi</span>
+          </div>
+          <p class="text-[11px] text-emerald-800">
+            Berkas: <code>SIKD_TulangBawang_Agt2026.csv</code> (3 baris valid siap diproses).
+          </p>
+        </div>
+
+        <div class="flex justify-between items-center pt-2 border-t border-slate-200">
+          <a href="#" onclick="alert('Templat CSV berhasil diunduh.'); return false;" class="text-primary font-semibold hover:underline flex items-center space-x-1">
+            <span class="material-symbols-outlined text-sm">download</span>
+            <span>Unduh Templat CSV</span>
+          </a>
+          <div class="flex space-x-2">
+            <button class="btn-close-modal px-4 py-2 border border-slate-300 rounded-lg font-semibold hover:bg-slate-50">Tutup</button>
+            <button id="btn-process-import" class="px-4 py-2 bg-primary text-white rounded-lg font-semibold hover:bg-primary-container">Mulai Impor</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- MODAL 3: AKSI VERIFIKASI / TOLAK DOKUMEN -->
+  <!-- ================================================================= -->
+  <div id="modal-verifikasi-action" class="modal-container modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-xl shadow-2xl border border-slate-200 max-w-md w-full overflow-hidden">
+      <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-surface-low">
+        <h3 id="modal-verif-title" class="font-bold text-sm text-slate-900">Verifikasi Dokumen</h3>
+        <button class="btn-close-modal text-slate-400 hover:text-slate-700">
+          <span class="material-symbols-outlined text-base">close</span>
+        </button>
+      </div>
+
+      <form id="form-verifikasi-action" class="p-5 space-y-4 text-xs">
+        <input type="hidden" id="modal-verif-id">
+        <input type="hidden" id="modal-verif-is-approve">
+
+        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+          <span class="text-slate-400 block text-[11px]">Dokumen yang Ditinjau:</span>
+          <div id="modal-verif-doc-info" class="font-bold text-slate-800 font-mono-numbers mt-0.5">...</div>
+        </div>
+
+        <div>
+          <label for="modal-verif-catatan" class="block font-semibold text-slate-700 mb-1">Catatan Keputusan / Alasan Penolakan:</label>
+          <textarea id="modal-verif-catatan" rows="3" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary"></textarea>
+        </div>
+
+        <div class="flex justify-end space-x-2 pt-2 border-t border-slate-200">
+          <button type="button" class="btn-close-modal px-4 py-2 border border-slate-300 rounded-lg font-semibold hover:bg-slate-50">Batal</button>
+          <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg font-semibold hover:bg-primary-container">Simpan Keputusan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/app.js"></script>
+
+  <!-- Script Inline Kalkulator Target -->
+  <script>
+    function hitungSimulasiTarget() {
+      const targetM = parseFloat(document.getElementById("sim-input-target").value) || 0;
+      const realisasiM = parseFloat(document.getElementById("sim-input-realisasi").value) || 0;
+      const sisaBulan = parseInt(document.getElementById("sim-input-bulan").value) || 4;
+
+      const sisaM = Math.max(0, targetM - realisasiM);
+      const kebutuhanM = sisaBulan > 0 ? (sisaM / sisaBulan) : 0;
+
+      document.getElementById("sim-res-sisa").textContent = `Rp ${sisaM.toFixed(2).replace('.', ',')} Miliar`;
+      document.getElementById("sim-res-kebutuhan").textContent = `Rp ${kebutuhanM.toFixed(2).replace('.', ',')} Miliar / bln`;
+
+      const rasioKenaikan = (kebutuhanM / 8.22).toFixed(1);
+      const recoEl = document.getElementById("sim-res-rekomendasi");
+      if (kebutuhanM > 25) {
+        recoEl.className = "p-4 bg-red-50 rounded-lg border border-red-200 text-xs text-red-900 leading-relaxed";
+        recoEl.innerHTML = `<strong class="font-bold block mb-1">Risiko Fiskal Tinggi:</strong> Kebutuhan ${kebutuhanM.toFixed(2)} M/bln membutuhkan percepatan ${rasioKenaikan}x lipat dari rata-rata berjalan. Target ini berisiko kembali meleset seperti TA 2024 (74%) dan TA 2025 (45%). Disarankan rasionalisasi target pada pagu Rp 160–175 Miliar.`;
+      } else {
+        recoEl.className = "p-4 bg-emerald-50 rounded-lg border border-emerald-200 text-xs text-emerald-900 leading-relaxed";
+        recoEl.innerHTML = `<strong class="font-bold block mb-1">Skenario Realistis:</strong> Kebutuhan ${kebutuhanM.toFixed(2)} M/bln berada dalam batas kapasitas pemungutan triwulan akhir Tulang Bawang jika PBB-P2 perkebunan terhimpun tepat waktu.`;
+      }
+
+      SIMPAD_UTILS.showToast("Kalkulasi Selesai", `Skenario target Rp ${targetM} Miliar berhasil dihitung.`, "info");
+    }
+  </script>
+</body>
+</html>

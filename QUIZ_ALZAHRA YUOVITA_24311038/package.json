@@ -1,0 +1,18 @@
+{
+  "name": "simpad-tulang-bawang",
+  "version": "1.0.0",
+  "description": "Sistem Informasi Monitoring dan Optimalisasi PAD Kabupaten Tulang Bawang",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "simpad",
+    "pad",
+    "tulang-bawang",
+    "dashboard",
+    "government"
+  ],
+  "author": "Pemerintah Kabupaten Tulang Bawang",
+  "license": "ISC"
+}

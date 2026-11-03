@@ -1,0 +1,155 @@
+/* ==========================================================================
+   SIMPAD Kabupaten Tulang Bawang - Master Stylesheet
+   Design Standards: skill_desain_simpad.md
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --color-primary: #001038;
+  --color-primary-container: #0F2557;
+  --color-secondary: #006D30;
+  --color-secondary-container: #92F5A4;
+  --color-error: #BA1A1A;
+  --color-error-container: #FFDAD6;
+  --color-warning: #B45309;
+  --color-warning-container: #FFDBCA;
+  --color-surface: #F8F9FF;
+  --color-surface-low: #EFF4FF;
+  --color-surface-lowest: #FFFFFF;
+  --color-border: #C5C6D0;
+  --color-text-main: #0B1C30;
+  --color-text-muted: #44464F;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--color-surface);
+  color: var(--color-text-main);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-mono-numbers {
+  font-family: 'JetBrains Mono', monospace;
+  font-feature-settings: "tnum" 1, "zero" 1;
+}
+
+/* Custom sleek scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #EFF4FF;
+}
+::-webkit-scrollbar-thumb {
+  background: #C5C6D0;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #757680;
+}
+
+/* Siger Lampung Pattern Element */
+.siger-bg-motif {
+  background-image: radial-gradient(#0F2557 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+/* Status Badges */
+.badge-terverifikasi {
+  background-color: #E8F8EE;
+  color: #006D30;
+  border: 1px solid #92F5A4;
+}
+
+.badge-menunggu {
+  background-color: #FFF7ED;
+  color: #B45309;
+  border: 1px solid #FED7AA;
+}
+
+.badge-ditolak {
+  background-color: #FEF2F2;
+  color: #BA1A1A;
+  border: 1px solid #FECACA;
+}
+
+.badge-anomali {
+  background-color: #FFF1F2;
+  color: #E11D48;
+  border: 1px solid #FDA4AF;
+}
+
+/* Card hover animation */
+.kpi-card {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+}
+.kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 16, 56, 0.08), 0 8px 10px -6px rgba(0, 16, 56, 0.04);
+}
+
+/* Nav Item Active Styling */
+.nav-item.active {
+  background-color: #001038;
+  color: #FFFFFF !important;
+  font-weight: 600;
+  border-left: 4px solid #95F8A7;
+}
+
+/* Modal Backdrop */
+.modal-overlay {
+  background-color: rgba(0, 16, 56, 0.65);
+  backdrop-filter: blur(4px);
+}
+
+/* Pulse animation for live monitoring */
+@keyframes pulse-dot {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 109, 48, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(0, 109, 48, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 109, 48, 0); }
+}
+
+.live-indicator {
+  width: 8px;
+  height: 8px;
+  background-color: #006D30;
+  border-radius: 50%;
+  display: inline-block;
+  animation: pulse-dot 2s infinite;
+}
+
+/* Print Optimization for Laporan Eksekutif Sekda / Bupati */
+@media print {
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+    font-size: 11pt;
+  }
+  
+  #sidebar, #top-bar, .no-print, button, .filter-controls {
+    display: none !important;
+  }
+
+  #main-content {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .shadow-sm, .shadow-md, .shadow-lg {
+    box-shadow: none !important;
+    border: 1px solid #DDD !important;
+  }
+
+  .page-break {
+    page-break-after: always;
+  }
+}
